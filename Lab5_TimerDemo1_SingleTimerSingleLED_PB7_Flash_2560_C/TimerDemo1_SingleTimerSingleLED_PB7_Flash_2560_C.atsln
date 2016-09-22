@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "TimerDemo1_SingleTimerSingleLED_PB7_Flash_2560_C", "TimerDemo1_SingleTimerSingleLED_PB7_Flash_2560_C\TimerDemo1_SingleTimerSingleLED_PB7_Flash_2560_C.cproj", "{39D97E47-935E-4D98-AA0D-D6CBEC0F9847}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{39D97E47-935E-4D98-AA0D-D6CBEC0F9847}.Debug|AVR.ActiveCfg = Debug|AVR
+		{39D97E47-935E-4D98-AA0D-D6CBEC0F9847}.Debug|AVR.Build.0 = Debug|AVR
+		{39D97E47-935E-4D98-AA0D-D6CBEC0F9847}.Release|AVR.ActiveCfg = Release|AVR
+		{39D97E47-935E-4D98-AA0D-D6CBEC0F9847}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
