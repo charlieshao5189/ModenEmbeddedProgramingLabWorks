@@ -448,7 +448,7 @@ END GROUP
  *(.fini0)
                 0x00000c4e                _etext = .
 
-.data           0x00800200       0x66 load address 0x00000c4e
+.data           0x00800200       0x68 load address 0x00000c4e
                 0x00800200                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -457,26 +457,27 @@ END GROUP
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x0080020e       0x58 main.o
+                0x0080020e       0x59 main.o
  *(.gnu.linkonce.d*)
-                0x00800266                . = ALIGN (0x2)
-                0x00800266                _edata = .
-                0x00800266                PROVIDE (__data_end, .)
+                0x00800268                . = ALIGN (0x2)
+ *fill*         0x00800267        0x1 
+                0x00800268                _edata = .
+                0x00800268                PROVIDE (__data_end, .)
 
-.bss            0x00800266        0x0
-                0x00800266                PROVIDE (__bss_start, .)
+.bss            0x00800268        0x0
+                0x00800268                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  *(COMMON)
-                0x00800266                PROVIDE (__bss_end, .)
+                0x00800268                PROVIDE (__bss_end, .)
                 0x00000c4e                __data_load_start = LOADADDR (.data)
-                0x00000cb4                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00000cb6                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800266        0x0
+.noinit         0x00800268        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800266                _end = .
+                0x00800268                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -591,16 +592,16 @@ END GROUP
  .debug_frame   0x00000160       0x8c driver/uart.o
  .debug_frame   0x000001ec       0x34 main.o
 
-.debug_str      0x00000000      0x471
+.debug_str      0x00000000      0x3eb
  *(.debug_str)
- .debug_str     0x00000000      0x263 driver/mfrc522.o
-                                0x29c (size before relaxing)
- .debug_str     0x00000263       0x70 driver/spi.o
-                                0x1a2 (size before relaxing)
- .debug_str     0x000002d3      0x111 driver/uart.o
-                                0x236 (size before relaxing)
- .debug_str     0x000003e4       0x8d main.o
-                                0x2b7 (size before relaxing)
+ .debug_str     0x00000000      0x27f driver/mfrc522.o
+                                0x2b8 (size before relaxing)
+ .debug_str     0x0000027f       0x19 driver/spi.o
+                                0x1bb (size before relaxing)
+ .debug_str     0x00000298       0xc6 driver/uart.o
+                                0x25b (size before relaxing)
+ .debug_str     0x0000035e       0x8d main.o
+                                0x2dc (size before relaxing)
 
 .debug_loc      0x00000000      0xa08
  *(.debug_loc)

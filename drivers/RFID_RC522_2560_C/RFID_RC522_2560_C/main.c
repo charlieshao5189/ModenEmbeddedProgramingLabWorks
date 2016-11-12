@@ -160,7 +160,7 @@ int main()
 			if(byte == CARD_FOUND)
 			{
 				for(byte=0;byte<8;byte++)
-				fprintf(USART,"serialnumber[%d]: %x\n",byte,str[byte]);
+				fprintf(USART,"serial number[%d]: %x\n",byte,str[byte]);
 				//LCDHexDumpXY(byte*2,0,str[byte]);
 				
 				_delay_ms(2500);

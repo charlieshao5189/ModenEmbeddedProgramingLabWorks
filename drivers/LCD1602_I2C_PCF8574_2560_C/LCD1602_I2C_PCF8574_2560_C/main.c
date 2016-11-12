@@ -30,7 +30,6 @@ int main(void)
     USART0_TX_String("LCD_DISP_ON_BLINK!!!\n");
 	//lcd go home
 	lcd_home();
-
 	uint8_t led = 0;
 	while(1) {
 		lcd_led(led); //set led
@@ -39,9 +38,11 @@ int main(void)
 		int i = 0;
 		int line = 0;
 		lcd_gotoxy(0, 0);
-		lcd_puts("love you");
+		lcd_puts("T:-12 C  H:89%");
+		lcd_gotoxy(5, 0);
+		lcd_putc(0xdf);
 		lcd_gotoxy(0,1);
-		lcd_puts("Ingvil! ");
+		lcd_puts("L:10  D:LOC A:ON");
 		while(1);
 		for(i=0; i<10; i++) {
 			char buf[10];

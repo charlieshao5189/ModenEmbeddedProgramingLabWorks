@@ -537,14 +537,14 @@ END GROUP
  .debug_frame   0x000000ac       0x8c driver/uart.o
  .debug_frame   0x00000138       0x34 main.o
 
-.debug_str      0x00000000      0x30a
+.debug_str      0x00000000      0x32c
  *(.debug_str)
- .debug_str     0x00000000      0x211 driver/dht.o
-                                0x266 (size before relaxing)
- .debug_str     0x00000211       0xc6 driver/uart.o
-                                0x22f (size before relaxing)
- .debug_str     0x000002d7       0x33 main.o
-                                0x271 (size before relaxing)
+ .debug_str     0x00000000      0x233 driver/dht.o
+                                0x288 (size before relaxing)
+ .debug_str     0x00000233       0xc6 driver/uart.o
+                                0x251 (size before relaxing)
+ .debug_str     0x000002f9       0x33 main.o
+                                0x293 (size before relaxing)
 
 .debug_loc      0x00000000      0x771
  *(.debug_loc)

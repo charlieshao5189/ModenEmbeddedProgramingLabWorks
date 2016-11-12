@@ -1,12 +1,10 @@
-//https://github.com/jwalkiew/ir_nec
-
-#ifndef NEC_H_
-#define NEC_H_
+#ifndef __IR_REMOTE_NEC_H_
+#define __IR_REMOTE_NEC_H_
 
 #include <avr/io.h>
 
 #ifndef F_CPU
-	#define F_CPU 16000000
+#define F_CPU 16000000UL
 #endif
 
 #define IR_PIN PD3
@@ -60,22 +58,22 @@ volatile uint8_t command_bits_counter;
 
 /* Rising edge detection */
 void inline check_rising_edge() {
-	MCUCR |= (1 << ISC11);
-	MCUCR |= (1 << ISC10);
+	EICRA |= (1 << ISC31);
+	EICRA |= (1 << ISC30);
 	edge = EDGE_RISING;
 }
 
 /* Falling edge detection */
 void inline check_falling_edge() {
-	MCUCR |= (1 << ISC11);
-	MCUCR &= ~(1 << ISC10);
+	EICRA |= (1 << ISC31);
+	EICRA &= ~(1 << ISC30);
 	edge = EDGE_FALLING;
 }
 
 void inline toggle_edge() {
 	if (edge == EDGE_FALLING) {
 		check_rising_edge();
-	} else if (edge == EDGE_RISING) {
+		} else if (edge == EDGE_RISING) {
 		check_falling_edge();
 	}
 }

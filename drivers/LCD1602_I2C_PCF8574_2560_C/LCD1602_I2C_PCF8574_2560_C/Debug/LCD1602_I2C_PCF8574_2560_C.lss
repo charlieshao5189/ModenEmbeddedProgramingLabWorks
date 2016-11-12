@@ -3,31 +3,31 @@ LCD1602_I2C_PCF8574_2560_C.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         0000003a  00800200  00000652  000006e6  2**0
+  0 .data         00000048  00800200  0000065c  000006f0  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000652  00000000  00000000  00000094  2**1
+  1 .text         0000065c  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000009  0080023a  0080023a  00000720  2**0
+  2 .bss          00000009  00800248  00800248  00000738  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000720  2**0
+  3 .comment      00000030  00000000  00000000  00000738  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000750  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000768  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 000001b0  00000000  00000000  00000790  2**0
+  5 .debug_aranges 000001b0  00000000  00000000  000007a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00001506  00000000  00000000  00000940  2**0
+  6 .debug_info   00001546  00000000  00000000  00000958  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000008ca  00000000  00000000  00001e46  2**0
+  7 .debug_abbrev 000008ca  00000000  00000000  00001e9e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000de6  00000000  00000000  00002710  2**0
+  8 .debug_line   00000df2  00000000  00000000  00002768  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000384  00000000  00000000  000034f8  2**2
+  9 .debug_frame  00000384  00000000  00000000  0000355c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000005ac  00000000  00000000  0000387c  2**0
+ 10 .debug_str    0000054b  00000000  00000000  000038e0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000f70  00000000  00000000  00003e28  2**0
+ 11 .debug_loc    00000f70  00000000  00000000  00003e2b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000178  00000000  00000000  00004d98  2**0
+ 12 .debug_ranges 00000178  00000000  00000000  00004d9b  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -162,20 +162,20 @@ Disassembly of section .text:
   f4:	12 e0       	ldi	r17, 0x02	; 2
   f6:	a0 e0       	ldi	r26, 0x00	; 0
   f8:	b2 e0       	ldi	r27, 0x02	; 2
-  fa:	e2 e5       	ldi	r30, 0x52	; 82
+  fa:	ec e5       	ldi	r30, 0x5C	; 92
   fc:	f6 e0       	ldi	r31, 0x06	; 6
   fe:	00 e0       	ldi	r16, 0x00	; 0
  100:	0b bf       	out	0x3b, r16	; 59
  102:	02 c0       	rjmp	.+4      	; 0x108 <__do_copy_data+0x14>
  104:	07 90       	elpm	r0, Z+
  106:	0d 92       	st	X+, r0
- 108:	aa 33       	cpi	r26, 0x3A	; 58
+ 108:	a8 34       	cpi	r26, 0x48	; 72
  10a:	b1 07       	cpc	r27, r17
  10c:	d9 f7       	brne	.-10     	; 0x104 <__do_copy_data+0x10>
 
 0000010e <__do_clear_bss>:
  10e:	22 e0       	ldi	r18, 0x02	; 2
- 110:	aa e3       	ldi	r26, 0x3A	; 58
+ 110:	a8 e4       	ldi	r26, 0x48	; 72
  112:	b2 e0       	ldi	r27, 0x02	; 2
  114:	01 c0       	rjmp	.+2      	; 0x118 <.do_clear_bss_start>
 
@@ -183,30 +183,36 @@ Disassembly of section .text:
  116:	1d 92       	st	X+, r1
 
 00000118 <.do_clear_bss_start>:
- 118:	a3 34       	cpi	r26, 0x43	; 67
+ 118:	a1 35       	cpi	r26, 0x51	; 81
  11a:	b2 07       	cpc	r27, r18
  11c:	e1 f7       	brne	.-8      	; 0x116 <.do_clear_bss_loop>
  11e:	7e d2       	rcall	.+1276   	; 0x61c <main>
- 120:	96 c2       	rjmp	.+1324   	; 0x64e <_exit>
+ 120:	9b c2       	rjmp	.+1334   	; 0x658 <_exit>
 
 00000122 <__bad_interrupt>:
  122:	6e cf       	rjmp	.-292    	; 0x0 <__vectors>
 
 00000124 <lcd_read>:
+
+    while ( (c = pgm_read_byte(progmem_s++)) ) {
+        lcd_putc(c);
+    }
+
+}/* lcd_puts_p */
  124:	cf 93       	push	r28
  126:	88 23       	and	r24, r24
  128:	31 f0       	breq	.+12     	; 0x136 <lcd_read+0x12>
- 12a:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 12a:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  12e:	81 60       	ori	r24, 0x01	; 1
- 130:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 130:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  134:	05 c0       	rjmp	.+10     	; 0x140 <lcd_read+0x1c>
- 136:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 136:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  13a:	8e 7f       	andi	r24, 0xFE	; 254
- 13c:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 140:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 13c:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 140:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  144:	82 60       	ori	r24, 0x02	; 2
- 146:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 14a:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 146:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 14a:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  14e:	87 e0       	ldi	r24, 0x07	; 7
  150:	8d d1       	rcall	.+794    	; 0x46c <pcf8574_setoutput>
  152:	62 e0       	ldi	r22, 0x02	; 2
@@ -267,104 +273,104 @@ Disassembly of section .text:
  1b4:	c8 2f       	mov	r28, r24
  1b6:	66 23       	and	r22, r22
  1b8:	31 f0       	breq	.+12     	; 0x1c6 <lcd_write+0x14>
- 1ba:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 1ba:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  1be:	81 60       	ori	r24, 0x01	; 1
- 1c0:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 1c0:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  1c4:	05 c0       	rjmp	.+10     	; 0x1d0 <lcd_write+0x1e>
- 1c6:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 1c6:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  1ca:	8e 7f       	andi	r24, 0xFE	; 254
- 1cc:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 1d0:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 1cc:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 1d0:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  1d4:	8d 7f       	andi	r24, 0xFD	; 253
- 1d6:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 1da:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 1d6:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 1da:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  1de:	87 e0       	ldi	r24, 0x07	; 7
  1e0:	45 d1       	rcall	.+650    	; 0x46c <pcf8574_setoutput>
- 1e2:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 1e2:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  1e6:	8f 77       	andi	r24, 0x7F	; 127
- 1e8:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 1ec:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 1e8:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 1ec:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  1f0:	8f 7b       	andi	r24, 0xBF	; 191
- 1f2:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 1f6:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 1f2:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 1f6:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  1fa:	8f 7d       	andi	r24, 0xDF	; 223
- 1fc:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 200:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 1fc:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 200:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  204:	8f 7e       	andi	r24, 0xEF	; 239
- 206:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 206:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  20a:	cc 23       	and	r28, r28
  20c:	2c f4       	brge	.+10     	; 0x218 <lcd_write+0x66>
- 20e:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 20e:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  212:	80 68       	ori	r24, 0x80	; 128
- 214:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 214:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  218:	c6 ff       	sbrs	r28, 6
  21a:	05 c0       	rjmp	.+10     	; 0x226 <lcd_write+0x74>
- 21c:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 21c:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  220:	80 64       	ori	r24, 0x40	; 64
- 222:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 222:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  226:	c5 ff       	sbrs	r28, 5
  228:	05 c0       	rjmp	.+10     	; 0x234 <lcd_write+0x82>
- 22a:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 22a:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  22e:	80 62       	ori	r24, 0x20	; 32
- 230:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 230:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  234:	c4 ff       	sbrs	r28, 4
  236:	05 c0       	rjmp	.+10     	; 0x242 <lcd_write+0x90>
- 238:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 238:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  23c:	80 61       	ori	r24, 0x10	; 16
- 23e:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 242:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 23e:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 242:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  246:	87 e0       	ldi	r24, 0x07	; 7
  248:	11 d1       	rcall	.+546    	; 0x46c <pcf8574_setoutput>
  24a:	ab df       	rcall	.-170    	; 0x1a2 <toggle_e>
- 24c:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 24c:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  250:	8f 77       	andi	r24, 0x7F	; 127
- 252:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 256:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 252:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 256:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  25a:	8f 7b       	andi	r24, 0xBF	; 191
- 25c:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 260:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 25c:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 260:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  264:	8f 7d       	andi	r24, 0xDF	; 223
- 266:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 26a:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 266:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 26a:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  26e:	8f 7e       	andi	r24, 0xEF	; 239
- 270:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 270:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  274:	c3 ff       	sbrs	r28, 3
  276:	05 c0       	rjmp	.+10     	; 0x282 <lcd_write+0xd0>
- 278:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 278:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  27c:	80 68       	ori	r24, 0x80	; 128
- 27e:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 27e:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  282:	c2 ff       	sbrs	r28, 2
  284:	05 c0       	rjmp	.+10     	; 0x290 <lcd_write+0xde>
- 286:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 286:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  28a:	80 64       	ori	r24, 0x40	; 64
- 28c:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 28c:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  290:	c1 ff       	sbrs	r28, 1
  292:	05 c0       	rjmp	.+10     	; 0x29e <lcd_write+0xec>
- 294:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 294:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  298:	80 62       	ori	r24, 0x20	; 32
- 29a:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 29a:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  29e:	c0 ff       	sbrs	r28, 0
  2a0:	05 c0       	rjmp	.+10     	; 0x2ac <lcd_write+0xfa>
- 2a2:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 2a2:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  2a6:	80 61       	ori	r24, 0x10	; 16
- 2a8:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 2ac:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 2a8:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 2ac:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  2b0:	87 e0       	ldi	r24, 0x07	; 7
  2b2:	dc d0       	rcall	.+440    	; 0x46c <pcf8574_setoutput>
  2b4:	76 df       	rcall	.-276    	; 0x1a2 <toggle_e>
- 2b6:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 2b6:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  2ba:	80 61       	ori	r24, 0x10	; 16
- 2bc:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 2c0:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 2bc:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 2c0:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  2c4:	80 62       	ori	r24, 0x20	; 32
- 2c6:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 2ca:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 2c6:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 2ca:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  2ce:	80 64       	ori	r24, 0x40	; 64
- 2d0:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 2d4:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 2d0:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 2d4:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  2d8:	80 68       	ori	r24, 0x80	; 128
- 2da:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 2de:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 2da:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 2de:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  2e2:	87 e0       	ldi	r24, 0x07	; 7
  2e4:	c3 d0       	rcall	.+390    	; 0x46c <pcf8574_setoutput>
  2e6:	cf 91       	pop	r28
@@ -398,14 +404,14 @@ Disassembly of section .text:
 00000310 <lcd_led>:
  310:	88 23       	and	r24, r24
  312:	31 f0       	breq	.+12     	; 0x320 <lcd_led+0x10>
- 314:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 314:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  318:	87 7f       	andi	r24, 0xF7	; 247
- 31a:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
+ 31a:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
  31e:	05 c0       	rjmp	.+10     	; 0x32a <lcd_led+0x1a>
- 320:	80 91 3a 02 	lds	r24, 0x023A	; 0x80023a <__data_end>
+ 320:	80 91 48 02 	lds	r24, 0x0248	; 0x800248 <__data_end>
  324:	88 60       	ori	r24, 0x08	; 8
- 326:	80 93 3a 02 	sts	0x023A, r24	; 0x80023a <__data_end>
- 32a:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 326:	80 93 48 02 	sts	0x0248, r24	; 0x800248 <__data_end>
+ 32a:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  32e:	87 e0       	ldi	r24, 0x07	; 7
  330:	9d c0       	rjmp	.+314    	; 0x46c <pcf8574_setoutput>
  332:	08 95       	ret
@@ -465,67 +471,159 @@ Disassembly of section .text:
  392:	08 95       	ret
 
 00000394 <lcd_init>:
+                   LCD_DISP_ON_CURSOR      display on, cursor on
+                   LCD_DISP_CURSOR_BLINK   display on, cursor on flashing
+Returns:  none
+*************************************************************************/
+void lcd_init(uint8_t dispAttr)
+{
  394:	1f 93       	push	r17
  396:	cf 93       	push	r28
  398:	df 93       	push	r29
  39a:	18 2f       	mov	r17, r24
+	#if LCD_PCF8574_INIT == 1
+	//init pcf8574
+	pcf8574_init();
  39c:	40 d0       	rcall	.+128    	; 0x41e <pcf8574_init>
- 39e:	10 92 3a 02 	sts	0x023A, r1	; 0x80023a <__data_end>
- 3a2:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+	#endif
+
+	dataport = 0;
+ 39e:	10 92 48 02 	sts	0x0248, r1	; 0x800248 <__data_end>
+	pcf8574_setoutput(LCD_PCF8574_DEVICEID, dataport);
+ 3a2:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  3a6:	87 e0       	ldi	r24, 0x07	; 7
  3a8:	61 d0       	rcall	.+194    	; 0x46c <pcf8574_setoutput>
+static inline void _delayFourCycles(unsigned int __count)
+{
+    if ( __count == 0 )    
+        __asm__ __volatile__( "rjmp 1f\n 1:" );    // 2 cycles
+    else
+        __asm__ __volatile__ (
  3aa:	80 e0       	ldi	r24, 0x00	; 0
  3ac:	9a ef       	ldi	r25, 0xFA	; 250
  3ae:	01 97       	sbiw	r24, 0x01	; 1
  3b0:	f1 f7       	brne	.-4      	; 0x3ae <lcd_init+0x1a>
- 3b2:	90 91 3a 02 	lds	r25, 0x023A	; 0x80023a <__data_end>
+	pcf8574_setoutput(LCD_PCF8574_DEVICEID, dataport);
+
+    delay(16000);        /* wait 16ms or more after power-on       */
+
+    /* initial write to lcd is 8bit */
+    dataport |= _BV(LCD_DATA1_PIN);  // _BV(LCD_FUNCTION)>>4;
+ 3b2:	90 91 48 02 	lds	r25, 0x0248	; 0x800248 <__data_end>
  3b6:	90 62       	ori	r25, 0x20	; 32
- 3b8:	90 93 3a 02 	sts	0x023A, r25	; 0x80023a <__data_end>
- 3bc:	90 91 3a 02 	lds	r25, 0x023A	; 0x80023a <__data_end>
+ 3b8:	90 93 48 02 	sts	0x0248, r25	; 0x800248 <__data_end>
+    dataport |= _BV(LCD_DATA0_PIN);  // _BV(LCD_FUNCTION_8BIT)>>4;
+ 3bc:	90 91 48 02 	lds	r25, 0x0248	; 0x800248 <__data_end>
  3c0:	90 61       	ori	r25, 0x10	; 16
- 3c2:	90 93 3a 02 	sts	0x023A, r25	; 0x80023a <__data_end>
- 3c6:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 3c2:	90 93 48 02 	sts	0x0248, r25	; 0x800248 <__data_end>
+    pcf8574_setoutput(LCD_PCF8574_DEVICEID, dataport);
+ 3c6:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  3ca:	87 e0       	ldi	r24, 0x07	; 7
  3cc:	4f d0       	rcall	.+158    	; 0x46c <pcf8574_setoutput>
+
+    lcd_e_toggle();
  3ce:	e9 de       	rcall	.-558    	; 0x1a2 <toggle_e>
+static inline void _delayFourCycles(unsigned int __count)
+{
+    if ( __count == 0 )    
+        __asm__ __volatile__( "rjmp 1f\n 1:" );    // 2 cycles
+    else
+        __asm__ __volatile__ (
  3d0:	e0 e0       	ldi	r30, 0x00	; 0
  3d2:	fe e4       	ldi	r31, 0x4E	; 78
  3d4:	31 97       	sbiw	r30, 0x01	; 1
  3d6:	f1 f7       	brne	.-4      	; 0x3d4 <lcd_init+0x40>
+
+    lcd_e_toggle();
+    delay(4992);         /* delay, busy flag can't be checked here */
+   
+    /* repeat last command */ 
+    lcd_e_toggle();      
  3d8:	e4 de       	rcall	.-568    	; 0x1a2 <toggle_e>
+static inline void _delayFourCycles(unsigned int __count)
+{
+    if ( __count == 0 )    
+        __asm__ __volatile__( "rjmp 1f\n 1:" );    // 2 cycles
+    else
+        __asm__ __volatile__ (
  3da:	c0 e0       	ldi	r28, 0x00	; 0
  3dc:	d1 e0       	ldi	r29, 0x01	; 1
  3de:	fe 01       	movw	r30, r28
  3e0:	31 97       	sbiw	r30, 0x01	; 1
  3e2:	f1 f7       	brne	.-4      	; 0x3e0 <lcd_init+0x4c>
+    /* repeat last command */ 
+    lcd_e_toggle();      
+    delay(64);           /* delay, busy flag can't be checked here */
+    
+    /* repeat last command a third time */
+    lcd_e_toggle();      
  3e4:	de de       	rcall	.-580    	; 0x1a2 <toggle_e>
+static inline void _delayFourCycles(unsigned int __count)
+{
+    if ( __count == 0 )    
+        __asm__ __volatile__( "rjmp 1f\n 1:" );    // 2 cycles
+    else
+        __asm__ __volatile__ (
  3e6:	fe 01       	movw	r30, r28
  3e8:	31 97       	sbiw	r30, 0x01	; 1
  3ea:	f1 f7       	brne	.-4      	; 0x3e8 <lcd_init+0x54>
- 3ec:	90 91 3a 02 	lds	r25, 0x023A	; 0x80023a <__data_end>
+    /* repeat last command a third time */
+    lcd_e_toggle();      
+    delay(64);           /* delay, busy flag can't be checked here */
+
+    /* now configure for 4bit mode */
+    dataport &= ~_BV(LCD_DATA0_PIN);
+ 3ec:	90 91 48 02 	lds	r25, 0x0248	; 0x800248 <__data_end>
  3f0:	9f 7e       	andi	r25, 0xEF	; 239
- 3f2:	90 93 3a 02 	sts	0x023A, r25	; 0x80023a <__data_end>
- 3f6:	60 91 3a 02 	lds	r22, 0x023A	; 0x80023a <__data_end>
+ 3f2:	90 93 48 02 	sts	0x0248, r25	; 0x800248 <__data_end>
+    pcf8574_setoutput(LCD_PCF8574_DEVICEID, dataport);
+ 3f6:	60 91 48 02 	lds	r22, 0x0248	; 0x800248 <__data_end>
  3fa:	87 e0       	ldi	r24, 0x07	; 7
  3fc:	37 d0       	rcall	.+110    	; 0x46c <pcf8574_setoutput>
+    lcd_e_toggle();
  3fe:	d1 de       	rcall	.-606    	; 0x1a2 <toggle_e>
+static inline void _delayFourCycles(unsigned int __count)
+{
+    if ( __count == 0 )    
+        __asm__ __volatile__( "rjmp 1f\n 1:" );    // 2 cycles
+    else
+        __asm__ __volatile__ (
  400:	21 97       	sbiw	r28, 0x01	; 1
  402:	f1 f7       	brne	.-4      	; 0x400 <__FUSE_REGION_LENGTH__>
+    lcd_e_toggle();
+    delay(64);           /* some displays need this additional delay */
+    
+    /* from now the LCD only accepts 4 bit I/O, we can use lcd_command() */    
+
+    lcd_command(LCD_FUNCTION_DEFAULT);      /* function set: display lines  */
  404:	88 e2       	ldi	r24, 0x28	; 40
  406:	71 df       	rcall	.-286    	; 0x2ea <lcd_command>
+
+    lcd_command(LCD_DISP_OFF);              /* display off                  */
  408:	88 e0       	ldi	r24, 0x08	; 8
  40a:	6f df       	rcall	.-290    	; 0x2ea <lcd_command>
+    lcd_clrscr();                           /* display clear                */
  40c:	7e df       	rcall	.-260    	; 0x30a <lcd_clrscr>
+    lcd_command(LCD_MODE_DEFAULT);          /* set entry mode               */
  40e:	86 e0       	ldi	r24, 0x06	; 6
  410:	6c df       	rcall	.-296    	; 0x2ea <lcd_command>
+    lcd_command(dispAttr);                  /* display/cursor control       */
  412:	81 2f       	mov	r24, r17
  414:	6a df       	rcall	.-300    	; 0x2ea <lcd_command>
+
+}/* lcd_init */
  416:	df 91       	pop	r29
  418:	cf 91       	pop	r28
  41a:	1f 91       	pop	r17
  41c:	08 95       	ret
 
 0000041e <pcf8574_init>:
+		i2c_write(b);
+		i2c_stop();
+		return 0;
+	}
+	return -1;
+}
  41e:	76 d0       	rcall	.+236    	; 0x50c <i2c_init>
  420:	85 e3       	ldi	r24, 0x35	; 53
  422:	8a 95       	dec	r24
@@ -534,7 +632,7 @@ Disassembly of section .text:
  428:	80 e0       	ldi	r24, 0x00	; 0
  42a:	90 e0       	ldi	r25, 0x00	; 0
  42c:	fc 01       	movw	r30, r24
- 42e:	e5 5c       	subi	r30, 0xC5	; 197
+ 42e:	e7 5b       	subi	r30, 0xB7	; 183
  430:	fd 4f       	sbci	r31, 0xFD	; 253
  432:	10 82       	st	Z, r1
  434:	01 96       	adiw	r24, 0x01	; 1
@@ -550,7 +648,7 @@ Disassembly of section .text:
  444:	88 f4       	brcc	.+34     	; 0x468 <pcf8574_getoutputpin+0x2a>
  446:	e8 2f       	mov	r30, r24
  448:	f0 e0       	ldi	r31, 0x00	; 0
- 44a:	e5 5c       	subi	r30, 0xC5	; 197
+ 44a:	e7 5b       	subi	r30, 0xB7	; 183
  44c:	fd 4f       	sbci	r31, 0xFD	; 253
  44e:	80 81       	ld	r24, Z
  450:	08 2e       	mov	r0, r24
@@ -576,7 +674,7 @@ Disassembly of section .text:
  474:	98 2f       	mov	r25, r24
  476:	e8 2f       	mov	r30, r24
  478:	f0 e0       	ldi	r31, 0x00	; 0
- 47a:	e5 5c       	subi	r30, 0xC5	; 197
+ 47a:	e7 5b       	subi	r30, 0xB7	; 183
  47c:	fd 4f       	sbci	r31, 0xFD	; 253
  47e:	60 83       	st	Z, r22
  480:	80 e2       	ldi	r24, 0x20	; 32
@@ -593,18 +691,27 @@ Disassembly of section .text:
  496:	08 95       	ret
 
 00000498 <pcf8574_setoutputpin>:
+
+/*
+ * set output pin
+ */
+int8_t pcf8574_setoutputpin(uint8_t deviceid, uint8_t pin, uint8_t data) {
  498:	cf 93       	push	r28
  49a:	df 93       	push	r29
+	if((deviceid >= 0 && deviceid < PCF8574_MAXDEVICES) && (pin >= 0 && pin < PCF8574_MAXPINS)) {
  49c:	88 30       	cpi	r24, 0x08	; 8
  49e:	50 f5       	brcc	.+84     	; 0x4f4 <pcf8574_setoutputpin+0x5c>
  4a0:	68 30       	cpi	r22, 0x08	; 8
  4a2:	50 f5       	brcc	.+84     	; 0x4f8 <pcf8574_setoutputpin+0x60>
+	    uint8_t b = 0;
+	    b = pcf8574_pinstatus[deviceid];
  4a4:	28 2f       	mov	r18, r24
  4a6:	30 e0       	ldi	r19, 0x00	; 0
  4a8:	f9 01       	movw	r30, r18
- 4aa:	e5 5c       	subi	r30, 0xC5	; 197
+ 4aa:	e7 5b       	subi	r30, 0xB7	; 183
  4ac:	fd 4f       	sbci	r31, 0xFD	; 253
  4ae:	90 81       	ld	r25, Z
+	    b = (data != 0) ? (b | (1 << pin)) : (b & ~(1 << pin));
  4b0:	44 23       	and	r20, r20
  4b2:	49 f0       	breq	.+18     	; 0x4c6 <pcf8574_setoutputpin+0x2e>
  4b4:	c1 e0       	ldi	r28, 0x01	; 1
@@ -626,37 +733,66 @@ Disassembly of section .text:
  4d4:	c0 95       	com	r28
  4d6:	c9 23       	and	r28, r25
  4d8:	98 2f       	mov	r25, r24
+	    pcf8574_pinstatus[deviceid] = b;
  4da:	f9 01       	movw	r30, r18
- 4dc:	e5 5c       	subi	r30, 0xC5	; 197
+ 4dc:	e7 5b       	subi	r30, 0xB7	; 183
  4de:	fd 4f       	sbci	r31, 0xFD	; 253
  4e0:	c0 83       	st	Z, r28
+	    //update device
+		i2c_start(((PCF8574_ADDRBASE+deviceid)<<1) | I2C_WRITE);
  4e2:	80 e2       	ldi	r24, 0x20	; 32
  4e4:	89 0f       	add	r24, r25
  4e6:	88 0f       	add	r24, r24
  4e8:	17 d0       	rcall	.+46     	; 0x518 <i2c_start>
+		i2c_write(b);
  4ea:	8c 2f       	mov	r24, r28
  4ec:	45 d0       	rcall	.+138    	; 0x578 <i2c_write>
+		i2c_stop();
  4ee:	3b d0       	rcall	.+118    	; 0x566 <i2c_stop>
+		return 0;
  4f0:	80 e0       	ldi	r24, 0x00	; 0
  4f2:	03 c0       	rjmp	.+6      	; 0x4fa <pcf8574_setoutputpin+0x62>
+	}
+	return -1;
  4f4:	8f ef       	ldi	r24, 0xFF	; 255
  4f6:	01 c0       	rjmp	.+2      	; 0x4fa <pcf8574_setoutputpin+0x62>
  4f8:	8f ef       	ldi	r24, 0xFF	; 255
+}
  4fa:	df 91       	pop	r29
  4fc:	cf 91       	pop	r28
  4fe:	08 95       	ret
 
 00000500 <pcf8574_setoutputpinhigh>:
+
+/*
+ * set output pin high
+ */
+int8_t pcf8574_setoutputpinhigh(uint8_t deviceid, uint8_t pin) {
+	return pcf8574_setoutputpin(deviceid, pin, 1);
  500:	41 e0       	ldi	r20, 0x01	; 1
  502:	ca cf       	rjmp	.-108    	; 0x498 <pcf8574_setoutputpin>
+}
  504:	08 95       	ret
 
 00000506 <pcf8574_setoutputpinlow>:
+
+/*
+ * set output pin low
+ */
+int8_t pcf8574_setoutputpinlow(uint8_t deviceid, uint8_t pin) {
+	return pcf8574_setoutputpin(deviceid, pin, 0);
  506:	40 e0       	ldi	r20, 0x00	; 0
  508:	c7 cf       	rjmp	.-114    	; 0x498 <pcf8574_setoutputpin>
+}
  50a:	08 95       	ret
 
 0000050c <i2c_init>:
+*************************************************************************/
+unsigned char i2c_rep_start(unsigned char address)
+{
+    return i2c_start( address );
+
+}/* i2c_rep_start */
  50c:	10 92 b9 00 	sts	0x00B9, r1	; 0x8000b9 <__TEXT_REGION_LENGTH__+0x7000b9>
  510:	82 e1       	ldi	r24, 0x12	; 18
  512:	80 93 b8 00 	sts	0x00B8, r24	; 0x8000b8 <__TEXT_REGION_LENGTH__+0x7000b8>
@@ -699,58 +835,121 @@ Disassembly of section .text:
  564:	08 95       	ret
 
 00000566 <i2c_stop>:
+ Terminates the data transfer and releases the I2C bus
+*************************************************************************/
+void i2c_stop(void)
+{
+    /* send stop condition */
+	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
  566:	84 e9       	ldi	r24, 0x94	; 148
  568:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7000bc>
+	
+	// wait until stop condition is executed and bus released
+	while(TWCR & (1<<TWSTO));
  56c:	ec eb       	ldi	r30, 0xBC	; 188
  56e:	f0 e0       	ldi	r31, 0x00	; 0
  570:	80 81       	ld	r24, Z
  572:	84 fd       	sbrc	r24, 4
  574:	fd cf       	rjmp	.-6      	; 0x570 <i2c_stop+0xa>
+
+}/* i2c_stop */
  576:	08 95       	ret
 
 00000578 <i2c_write>:
+unsigned char i2c_write( unsigned char data )
+{	
+    uint8_t   twst;
+    
+	// send data to the previously addressed device
+	TWDR = data;
  578:	80 93 bb 00 	sts	0x00BB, r24	; 0x8000bb <__TEXT_REGION_LENGTH__+0x7000bb>
+	TWCR = (1<<TWINT) | (1<<TWEN);
  57c:	84 e8       	ldi	r24, 0x84	; 132
  57e:	80 93 bc 00 	sts	0x00BC, r24	; 0x8000bc <__TEXT_REGION_LENGTH__+0x7000bc>
+
+	// wait until transmission completed
+	while(!(TWCR & (1<<TWINT)));
  582:	ec eb       	ldi	r30, 0xBC	; 188
  584:	f0 e0       	ldi	r31, 0x00	; 0
  586:	80 81       	ld	r24, Z
  588:	88 23       	and	r24, r24
  58a:	ec f7       	brge	.-6      	; 0x586 <i2c_write+0xe>
+
+	// check value of TWI Status Register. Mask prescaler bits
+	twst = TW_STATUS & 0xF8;
  58c:	90 91 b9 00 	lds	r25, 0x00B9	; 0x8000b9 <__TEXT_REGION_LENGTH__+0x7000b9>
  590:	98 7f       	andi	r25, 0xF8	; 248
+	if( twst != TW_MT_DATA_ACK) return 1;
  592:	81 e0       	ldi	r24, 0x01	; 1
  594:	98 32       	cpi	r25, 0x28	; 40
  596:	09 f4       	brne	.+2      	; 0x59a <i2c_write+0x22>
  598:	80 e0       	ldi	r24, 0x00	; 0
+	return 0;
+
+}/* i2c_write */
  59a:	08 95       	ret
 
 0000059c <USART0_SETUP_9600_BAUD_ASSUME_1MHz_CLOCK>:
+	// bit 4 FE Frame Error (flag) - programmatically clear this when writing to UCSRA
+	// bit 3 DOR Data OverRun (flag)
+	// bit 2 PE Parity Error
+	// bit 1 UX2 Double the USART TX speed (but also depends on value loaded into the Baud Rate Registers)
+	// bit 0 MPCM Multi-Processor Communication Mode
+	UCSR0A = 0b00000010; // Set U2X (Double the USART Tx speed, to reduce clocking error)
  59c:	82 e0       	ldi	r24, 0x02	; 2
  59e:	80 93 c0 00 	sts	0x00C0, r24	; 0x8000c0 <__TEXT_REGION_LENGTH__+0x7000c0>
+	// bit 2 UCSZ2 Character Size (see also UCSZ1:0 in UCSRC)
+	// 0 = 5,6,7 or 8-bit data
+	// 1 = 9-bit data
+	// bit 1 RXB8 RX Data bit 8 (only for 9-bit data)
+	// bit 0 TXB8 TX Data bit 8 (only for 9-bit data)
+	UCSR0B = 0b10011000;  // RX Complete Int Enable, RX Enable, TX Enable, 8-bit data
  5a2:	88 e9       	ldi	r24, 0x98	; 152
  5a4:	80 93 c1 00 	sts	0x00C1, r24	; 0x8000c1 <__TEXT_REGION_LENGTH__+0x7000c1>
+	// 11 = 8-bit data (UCSZ2 = 0)
+	// 11 = 9-bit data (UCSZ2 = 1)
+	// bit 0 UCPOL Clock POLarity
+	// 0 Rising XCK edge
+	// 1 Falling XCK edge
+	UCSR0C = 0b00000111;		// Asynchronous, No Parity, 1 stop, 8-bit data, Falling XCK edge
  5a8:	87 e0       	ldi	r24, 0x07	; 7
  5aa:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7000c2>
+
+	// UBRR0 - USART Baud Rate Register (16-bit register, comprising UBRR0H and UBRR0L)
+	
+	UBRR0H = 0; // 9600 baud, UBRR = F_CPU/8/9600-1, and  U2X must be set to '1' in UCSRA
  5ae:	10 92 c5 00 	sts	0x00C5, r1	; 0x8000c5 <__TEXT_REGION_LENGTH__+0x7000c5>
+	UBRR0L = F_CPU/8/9600-1;
  5b2:	8f ec       	ldi	r24, 0xCF	; 207
  5b4:	80 93 c4 00 	sts	0x00C4, r24	; 0x8000c4 <__TEXT_REGION_LENGTH__+0x7000c4>
  5b8:	08 95       	ret
 
 000005ba <USART0_TX_SingleByte>:
+}
+
+ void USART0_TX_SingleByte(unsigned char cByte)
+{
+	while(!(UCSR0A & (1 << UDRE0)));	// Wait for Tx Buffer to become empty (check UDRE flag)
  5ba:	e0 ec       	ldi	r30, 0xC0	; 192
  5bc:	f0 e0       	ldi	r31, 0x00	; 0
  5be:	90 81       	ld	r25, Z
  5c0:	95 ff       	sbrs	r25, 5
  5c2:	fd cf       	rjmp	.-6      	; 0x5be <USART0_TX_SingleByte+0x4>
+	UDR0 = cByte;	// Writing to the UDR transmit buffer causes the byte to be transmitted
  5c4:	80 93 c6 00 	sts	0x00C6, r24	; 0x8000c6 <__TEXT_REGION_LENGTH__+0x7000c6>
  5c8:	08 95       	ret
 
 000005ca <USART0_TX_String>:
+}
+
+void USART0_TX_String(char* sData)
+{
  5ca:	0f 93       	push	r16
  5cc:	1f 93       	push	r17
  5ce:	cf 93       	push	r28
  5d0:	df 93       	push	r29
+	int iCount;
+	int iStrlen = strlen(sData);
  5d2:	fc 01       	movw	r30, r24
  5d4:	01 90       	ld	r0, Z+
  5d6:	00 20       	and	r0, r0
@@ -758,21 +957,39 @@ Disassembly of section .text:
  5da:	31 97       	sbiw	r30, 0x01	; 1
  5dc:	e8 1b       	sub	r30, r24
  5de:	f9 0b       	sbc	r31, r25
+	if(0 != iStrlen)
  5e0:	71 f0       	breq	.+28     	; 0x5fe <USART0_TX_String+0x34>
+	{
+		for(iCount = 0; iCount < iStrlen; iCount++)
  5e2:	4a f0       	brmi	.+18     	; 0x5f6 <USART0_TX_String+0x2c>
  5e4:	ec 01       	movw	r28, r24
  5e6:	8c 01       	movw	r16, r24
  5e8:	0e 0f       	add	r16, r30
  5ea:	1f 1f       	adc	r17, r31
+		{
+			USART0_TX_SingleByte(sData[iCount]);
  5ec:	89 91       	ld	r24, Y+
  5ee:	e5 df       	rcall	.-54     	; 0x5ba <USART0_TX_SingleByte>
+{
+	int iCount;
+	int iStrlen = strlen(sData);
+	if(0 != iStrlen)
+	{
+		for(iCount = 0; iCount < iStrlen; iCount++)
  5f0:	c0 17       	cp	r28, r16
  5f2:	d1 07       	cpc	r29, r17
  5f4:	d9 f7       	brne	.-10     	; 0x5ec <USART0_TX_String+0x22>
+		{
+			USART0_TX_SingleByte(sData[iCount]);
+		}
+		USART0_TX_SingleByte(CR);
  5f6:	8d e0       	ldi	r24, 0x0D	; 13
  5f8:	e0 df       	rcall	.-64     	; 0x5ba <USART0_TX_SingleByte>
+		USART0_TX_SingleByte(LF);
  5fa:	8a e0       	ldi	r24, 0x0A	; 10
  5fc:	de df       	rcall	.-68     	; 0x5ba <USART0_TX_SingleByte>
+	}
+}
  5fe:	df 91       	pop	r29
  600:	cf 91       	pop	r28
  602:	1f 91       	pop	r17
@@ -780,11 +997,23 @@ Disassembly of section .text:
  606:	08 95       	ret
 
 00000608 <__vector_25>:
+// {
+// 	USART0_TX_String("Enter command {1,2,3,4} >");
+// }
+
+ISR(USART0_RX_vect) // (USART_RX_Complete_Handler) USART Receive-Complete Interrupt Handler
+{
  608:	1f 92       	push	r1
  60a:	0f 92       	push	r0
  60c:	0f b6       	in	r0, 0x3f	; 63
  60e:	0f 92       	push	r0
  610:	11 24       	eor	r1, r1
+// 		USART0_TX_String("Command '4' received");
+// 		PORTB = 0b000001000;		// Turn on LED (bit 3)
+// 		break;
+// 	}
+// 	USART0_DisplayPrompt();
+}
  612:	0f 90       	pop	r0
  614:	0f be       	out	0x3f, r0	; 63
  616:	0f 90       	pop	r0
@@ -815,7 +1044,6 @@ int main(void)
 	//lcd go home
 	lcd_home();
  62e:	82 de       	rcall	.-764    	; 0x334 <lcd_home>
-
 	uint8_t led = 0;
 	while(1) {
 		lcd_led(led); //set led
@@ -829,23 +1057,30 @@ int main(void)
  634:	60 e0       	ldi	r22, 0x00	; 0
  636:	80 e0       	ldi	r24, 0x00	; 0
  638:	60 de       	rcall	.-832    	; 0x2fa <lcd_gotoxy>
-		lcd_puts("love you");
+		lcd_puts("T:-12 C  H:89%");
  63a:	88 e2       	ldi	r24, 0x28	; 40
  63c:	92 e0       	ldi	r25, 0x02	; 2
  63e:	9b de       	rcall	.-714    	; 0x376 <lcd_puts>
-		lcd_gotoxy(0,1);
- 640:	61 e0       	ldi	r22, 0x01	; 1
- 642:	80 e0       	ldi	r24, 0x00	; 0
+		lcd_gotoxy(5, 0);
+ 640:	60 e0       	ldi	r22, 0x00	; 0
+ 642:	85 e0       	ldi	r24, 0x05	; 5
  644:	5a de       	rcall	.-844    	; 0x2fa <lcd_gotoxy>
-		lcd_puts("Ingvil! ");
- 646:	81 e3       	ldi	r24, 0x31	; 49
- 648:	92 e0       	ldi	r25, 0x02	; 2
- 64a:	95 de       	rcall	.-726    	; 0x376 <lcd_puts>
+		lcd_putc(0xdf);
+ 646:	8f ed       	ldi	r24, 0xDF	; 223
+ 648:	78 de       	rcall	.-784    	; 0x33a <lcd_putc>
+		lcd_gotoxy(0,1);
+ 64a:	61 e0       	ldi	r22, 0x01	; 1
+ 64c:	80 e0       	ldi	r24, 0x00	; 0
+ 64e:	55 de       	rcall	.-854    	; 0x2fa <lcd_gotoxy>
+		lcd_puts("L:10  D:LOC A:ON");
+ 650:	87 e3       	ldi	r24, 0x37	; 55
+ 652:	92 e0       	ldi	r25, 0x02	; 2
+ 654:	90 de       	rcall	.-736    	; 0x376 <lcd_puts>
 		while(1);
- 64c:	ff cf       	rjmp	.-2      	; 0x64c <main+0x30>
+ 656:	ff cf       	rjmp	.-2      	; 0x656 <main+0x3a>
 
-0000064e <_exit>:
- 64e:	f8 94       	cli
+00000658 <_exit>:
+ 658:	f8 94       	cli
 
-00000650 <__stop_program>:
- 650:	ff cf       	rjmp	.-2      	; 0x650 <__stop_program>
+0000065a <__stop_program>:
+ 65a:	ff cf       	rjmp	.-2      	; 0x65a <__stop_program>

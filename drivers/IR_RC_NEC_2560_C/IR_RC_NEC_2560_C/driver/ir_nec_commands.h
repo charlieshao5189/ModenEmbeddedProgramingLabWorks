@@ -1,5 +1,5 @@
-#ifndef COMMANDS_H_
-#define COMMANDS_H_
+#ifndef _IR_NEC_COMMANDS_H_
+#define _IR_NEC_COMMANDS_H_
 
 #define COMMAND_CH_MINUS		0x00ffa25d
 #define COMMAND_CH				0x00ff629d
@@ -23,4 +23,4 @@
 #define COMMAND_8				0x00ff4ab5
 #define COMMAND_9				0x00ff52ad
 
-#endif /* COMMANDS_H_ */
+#endif /* _IR_NEC_COMMANDS_H_ */
