@@ -8,24 +8,26 @@
 #include <avr/interrupt.h>
 #include "uart.h"
 #include "lcd1602/lcdpcf8574.h"
-
+#include "secuButton.h"
 #include "tricolorled.h"
 
 void alarm_ON(){
 	PORTA|= (1<<DDA1);//active alarm
+	alarmFlag=1;
+	tricolorled_onoff(LED_GREEN,LED_OFF);
 	lcd_gotoxy(13,1);
-	lcd_puts("ON ");
+	lcd_puts("ON");
 }
 
 void alarm_OFF(){
 	PORTA&= ~(1<<DDA1);//inactive alarm
-		lcd_gotoxy(13,1);
-		lcd_puts("OFF");
+	alarmFlag=0;
+	tricolorled_onoff(LED_RED,LED_OFF);
 }
 
-void secuButtonInit(){
+void securityInit(){
 	DDRA |= (1<<DDA1);//set portA pin0 to digital output, used as alarm control signal, set 1 will active alarm, set 0 inactive alarm
-	alarm_OFF();//turn off alarm
+	PORTA&= ~(1<<DDA1);//turn off buzzer
 	
 	DDRD &= ~(1<<DDD2);//set PORTD pin2 to digital input, as security button signal input
 	PORTD |= (1<<PD2);//pull up resister enable
@@ -33,23 +35,20 @@ void secuButtonInit(){
 	EIMSK |= (1<<INT2);//enable external interrupt 2
 	EIFR |= (1<<INTF2);//clear external interrupt 2 flag
 	sei();
+    securityEnableFlag=1; //enable security alarm (buzzer and red state led)
+	lcd_gotoxy(13,1);
+	lcd_puts("EN ");
 }
 
 
 ISR(INT2_vect)
 {
-	static unsigned char flag=0;
-	if(0==flag){
-		flag=1;
-		tricolorled_onoff(LED_RED,LED_ON);
+	if(1 == securityEnableFlag){
 		alarm_ON();
 		//fprintf(USART,"Allarm On!");
-		
 	}
 	else
 	{
-		flag=0;
-		tricolorled_onoff(LED_RED,LED_OFF);
 		alarm_OFF();
 		//fprintf(USART,"Allarm OFF!");
 	}

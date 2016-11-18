@@ -12,9 +12,8 @@ void ir_init() {
     TCNT1 = 0;// initialize counter
 
     DDRD &= ~(1 << IR_PIN);      //set IR_PIN to input
-    EIMSK |= (1 << INT3); 		/* External INT3 enable */
     EICRA |= (1 << ISC31); 		/* Falling edge detection */
-
+    EIMSK |= (1 << INT3); 		/* External INT3 enable */
 	sei();					// Enable interrupts at global level, set Global Interrupt Enable (I) bit
 
 	ir_reset();

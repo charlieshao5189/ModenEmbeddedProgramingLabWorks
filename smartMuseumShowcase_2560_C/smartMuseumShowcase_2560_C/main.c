@@ -2,7 +2,15 @@
 * smartMuseumShowcase_2560_C.c
 *
 * Created: 11/9/2016 2:21:16 PM
-* Author : charlie
+* Author : Charlie & Badis
+* History:
+*          11/11/2016: Finish all basic functions.
+*          11/13/2016: Fix bug: security's alarm activation affect other functions.
+* 
+* To-do-list: 1. add debug function
+*             2. change command style referring to Richard's temple file
+*             3. add watchdog
+*             4. add IR remote control command to mute alarm   
 */
 
 #define  F_CPU 16000000UL
@@ -23,44 +31,47 @@
 #include "library/ir_rc/ir_nec_commands.h"
 #include "library/ledlight.h"
 
-#define LOCK    1
-#define UNLOCK  0
+#define LOCK    1 //locker state
+#define UNLOCK  0 //locker state
 
-volatile unsigned char sampleFlag;//sample flag for DHT11, sample rate 1Hz
-volatile unsigned char rfidFlag;//sample flag for rfid, sample rate 1Hz
-volatile unsigned char irFlag;//sample flag for ir remote controller, sample rate 1Hz
-volatile int s_1_count;//1 second counter
-volatile unsigned char ms_300_count;//300 millisecond counter
+
+volatile unsigned char sampleFlag=0;//sample flag for DHT11, sample rate 1Hz
+volatile unsigned char rfidFlag=0;//sample flag for rfid, sample rate 1Hz
+volatile unsigned char irFlag=0;//sample flag for ir remote controller, sample rate 1Hz
 int8_t humidity;
 int8_t temperature;
 
-unsigned char lockState=1;
+unsigned char lockerState=1;
 unsigned char RFIDstr[MAX_LEN];
 const unsigned char KEYstr[MAX_LEN]={0xe5,0xdc,0x07,0x88,0xb6,0,0,0};
 
 void lcdFormate();//formate lcd display
 void tiemr5_10ms_tick_configure();//10ms tick timer, create period(1s and 300ms) of time for sampling,
-void DealTempHum(unsigned char sampleFlag);//get temperature and humidity value from DHT11 every 1 second.
-unsigned char DealRFID(unsigned char rfidFlag); // control locker servo according to RFID, active every 300 ms
-void DealIR(unsigned char irFlag);// change led light according to IR remote controller commands, active every 300 ms
+void HandleTempHum();//get temperature and humidity value from DHT11 every 1 second.
+unsigned char HandleRFID(); // control locker servo according to RFID, active every 300 ms
+void HandleIR();// change led light according to IR remote controller commands, active every 300 ms
+
+
+
 
 int main(void)
 {
 	USART0_SETUP_9600_BAUD_ASSUME_1MHz_CLOCK();//for program debug, show debug information on serial monitor
+
 	lcd_init(LCD_DISP_ON);//initialize lcd,display on, cursor off
 	lcd_led(LCD_Backlight_ON); //light lcd backlight
 	lcd_home();//lcd cursor go home
 	/*
 	---0 1 2 3 4 5 6 7 8 9 A B C D E F---
 	0--  T г║8 8 бу C     H : 8 8 %    --0
-	1--L : 1 0   D : L O C   A : O F F--1
+	1--L : 1 0   D : L O C   A : E N  --1
 	---0 1 2 3 4 5 6 7 8 9 A B C D E F---
 	*/
 	lcdFormate();// formate lcd display according to the upside framework
 	
 	triColorLed_init();//three color led initialize
 	
-	tiemr5_10ms_tick_configure();// tick timer configure, create interrupt very 10ms
+	tiemr5_10ms_tick_configure();// tick timer configure, create interrupt very 10ms, used to fresh flag 
 	
 	spi_init();//initialize SPI port for mfrc522, AVR as master
 	mfrc522_init();//initialize RFID
@@ -68,7 +79,7 @@ int main(void)
 	Servo_Timer3_FastPWM();//initialize timer3 to fastPWM mode, create 18ms period PWM signal for servo
 	SetServoPosition(LOCK);//set servo to lock position originally
 
-	secuButtonInit();//security button initialization,release this button will cause Alarm active
+	securityInit();//security button initialization,release this button will cause Alarm active
 	
 	ir_init();//initialize IR remote controller
 	
@@ -77,13 +88,14 @@ int main(void)
 	USART0_TX_String("initialization finish!!!\n");
 	while(1)
 	{
-		DealTempHum(sampleFlag);//every 1s, check DHT11 and display
-		DealRFID(rfidFlag);     //every 1s, check RFID input, unlock/lock locker
-		DealIR(irFlag);         //every 300 ms, check IR remoter command, new command input will be dealed to change led light
+		HandleTempHum();//every 1s, check DHT11 and display
+		HandleRFID();     //every 1s, check RFID input, unlock/lock locker
+		HandleIR();         //every 300 ms, check IR remoter command, new command input will be Handleed to change led light
+	 
 	}
 }
 //set 10ms tick to measure time
-void tiemr5_10ms_tick_configure()
+void tiemr5_10ms_tick_configure() 
 {
 	TCCR5A = 0b00000000;	// Normal port operation (OC5A, OC5B, OC5C), Clear Timer on 'Compare Match' (CTC) waveform mode)
 	TCCR5B = 0b00001010;	// CTC waveform mode, use prescaler 8
@@ -101,47 +113,61 @@ void tiemr5_10ms_tick_configure()
 	sei();
 }
 
+
 ISR(TIMER5_COMPA_vect) // TIMER5_CompareA_Handler (Interrupt Handler for Timer 5)
 {
+    static int s_1_count;//1 second counter
+	static unsigned char ms_300_count;//300 millisecond counter
+	
 	s_1_count++;
 	ms_300_count++;
-	
-	if(s_1_count>=100)
+
+	if(s_1_count >= 100)
 	{
-		sampleFlag=1;// set sampleFlag, trigger DealTempHum(sampleFlag) function
-		rfidFlag=1;  //set rfidFlag, trigger DealRFID(rfidFlag)  function
-		dht_gettemperaturehumidity(&temperature, &humidity);//get temperature and humidity from DHT11, must inside interrupt, put it outside will be interrupt by other interruption
-		tricolorled_toggle(LED_GREEN);//green state indicator toggle every 1s
+		sampleFlag++;// set sampleFlag, trigger HandleTempHum(sampleFlag) function
+		rfidFlag=1;  //set rfidFlag, trigger HandleRFID(rfidFlag)  function
+		if(0 == alarmFlag){
+			tricolorled_toggle(LED_GREEN);//green state indicator toggle
+		}
 		s_1_count=0;
+		//fprintf(USART,"TimerINT sampleFlag:%d,s_1_count:%d \n\t",sampleFlag,s_1_count);
 	}
-	if(ms_300_count>=30){
+	if(ms_300_count>=30)
+	{
+		if(1 == alarmFlag){
+		tricolorled_toggle(LED_RED);
+		}
 		irFlag=1;//set irFlag, check IR remoter controller command
-		ms_300_count=0;
+		ms_300_count=0;			
+		
 	}
 	
 }
 
-void DealTempHum(unsigned char sampleFlag)//get temperature and humidity value from DHT11 every 1 second.
+void HandleTempHum()//get temperature and humidity value from DHT11 every 1 second.
 {
 	char buf[3];
-	
-	if(1==sampleFlag){
+	//fprintf(USART,"s_1_count_begin:%d,sampleFlag:%d \n\t",s_1_count,sampleFlag);
+	if(10 <= sampleFlag)
+	{
 		//fprintf(USART,"temperature:%d,humidity:%d\n\t",temperature,humidity);
+		cli();
+		dht_gettemperaturehumidity(&temperature, &humidity);//get temperature and humidity from DHT11, must inside interrupt, put it outside will be interrupt by other interruption
+		sei();
 		lcd_gotoxy(3, 0);//set cursor to (3,0)
 		itoa(temperature, buf, 10);
 		lcd_puts(buf);
 		lcd_gotoxy(11, 0);
 		itoa(humidity, buf, 10);
 		lcd_puts(buf);
-		sampleFlag=0;
-		
-
+		sampleFlag = 0;
+		//fprintf(USART,"s_1_count_end:%d,sampleFlag:%d \n\t",s_1_count,sampleFlag);
 	}
 }
 
-unsigned char DealRFID(unsigned char rfidFlag){
+unsigned char HandleRFID(){
 	unsigned char RFIDbyte;
-	if(1==rfidFlag)
+	if(1 == rfidFlag)
 	{
 		RFIDbyte = mfrc522_request(PICC_REQALL,RFIDstr);//read mfrc522
 		if(RFIDbyte == CARD_FOUND)
@@ -153,22 +179,21 @@ unsigned char DealRFID(unsigned char rfidFlag){
 				}
 			}
 			tricolorled_onoff(LED_BLUE, LED_ON);
-			if(LOCK==lockState){
+			if(LOCK==lockerState){
 				SetServoPosition(UNLOCK);
-				lockState=UNLOCK;
-				lcd_gotoxy(7,1);
+				lockerState=UNLOCK;
+				lcd_gotoxy(7,1);
 				lcd_puts("OPE");
-				fprintf(USART,"show case door unlocked!");
+				//fprintf(USART,"show case door unlocked!");
 			}
 			else
 			{
 				SetServoPosition(LOCK);
-				lockState=LOCK;
-				lcd_gotoxy(7,1);
+				lockerState=LOCK;
+				lcd_gotoxy(7,1);
 				lcd_puts("LOC");
-				fprintf(USART,"show case door locked!");
+				//fprintf(USART,"show case door locked!");
 			}	
-			_delay_ms(1000);
 			tricolorled_onoff(LED_BLUE, LED_OFF);
 		}
 		rfidFlag=0;
@@ -178,14 +203,14 @@ unsigned char DealRFID(unsigned char rfidFlag){
 	
 }
 
-void DealIR(unsigned char irFlag){
+void HandleIR(){
 	uint32_t current_command = 0;
 	static unsigned char SwitchesValue;
 	char buf[3];
 	if(1==irFlag){
 		current_command = get_current_command();
 		if (current_command != 0){
-			fprintf(USART,"current_command:%x\n",current_command);
+			//fprintf(USART,"current_command:%x\n",current_command);
 			switch (current_command) {
 				case COMMAND_VOL_MINUS:
 				if( SwitchesValue == 0)
@@ -200,6 +225,17 @@ void DealIR(unsigned char irFlag){
 				{
 					SwitchesValue = 0;
 				};
+				break;
+				case COMMAND_PLAY_PAUSE:
+				securityEnableFlag ^= (securityEnableFlag|0x01);//toggle securityEnableFlag flag between 0 and 1
+				lcd_gotoxy(13,1);
+				if(0 == securityEnableFlag){
+					alarm_OFF();
+					lcd_puts("DIS");
+				}
+				else{
+					lcd_puts("EN ");
+				}
 				break;
 				case COMMAND_0:SwitchesValue=0;
 				break;
@@ -280,5 +316,5 @@ void lcdFormate()//formate lcd display
 	lcd_gotoxy(5, 0);
 	lcd_putc(0xdf);
 	lcd_gotoxy(0,1);
-	lcd_puts("L:0  D:LOC A:OFF");
+	lcd_puts("L:0  D:LOC A:EN ");
 }

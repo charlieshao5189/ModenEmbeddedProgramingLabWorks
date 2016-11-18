@@ -8,6 +8,7 @@
 #include <avr/interrupt.h>
 #include <string.h>
 #include <stdio.h>
+#include "uart.h"
 
 #define F_CPU 16000000UL
 
@@ -136,3 +137,12 @@ int usart_putchar_printf(char var, FILE *stream)
 }
 
 // fprintf(USART,"im usart%d yeeeah",d2);// send format string to Uart "im usart2 yeeeah"
+void uart_gotoxy(int x, int y)
+{
+	fprintf(USART,"%c[%d;%df",0x1B,y,x);
+}
+
+void uart_clear_screen()
+{
+	printf("\e[1;1H\e[2J");
+}
