@@ -12,7 +12,6 @@
 #include "tricolorled.h"
 
 void alarm_ON(){
-	PORTA|= (1<<DDA1);//active alarm
 	alarmFlag=1;
 	tricolorled_onoff(LED_GREEN,LED_OFF);
 	lcd_gotoxy(13,1);
